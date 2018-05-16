@@ -1,13 +1,15 @@
 package pl.kurcaba;
 
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 
+/**
+ * Its one square on the board
+ */
 public class Square extends Rectangle {
 
-    public final int X;
-    public final int Y;
+    public final int coordX;
+    public final int coordY;
 
 
     private Piece piece = null;
@@ -20,24 +22,14 @@ public class Square extends Rectangle {
         return piece;
     }
 
-    public Square(boolean color, int x, int y)
-    {
-        this.X = x;
-        this.Y = y;
+    public Square(boolean color, int coordX, int coordY) {
+        this.coordX = coordX;
+        this.coordY = coordY;
 
-        setWidth(gameWindow.SQUARE_SIZE);
-        setHeight(gameWindow.SQUARE_SIZE);
+        setWidth(GameWindow.SQUARE_SIZE);
+        setHeight(GameWindow.SQUARE_SIZE);
 
-        relocate(x * gameWindow.SQUARE_SIZE,y*gameWindow.SQUARE_SIZE);
+        relocate(coordX * GameWindow.SQUARE_SIZE, coordY * GameWindow.SQUARE_SIZE);
         setFill(color ? Color.valueOf("#feb") : Color.valueOf("#582"));
-
-        
-
     }
-
-
-
-
-
-
 }

@@ -1,14 +1,19 @@
 package pl.kurcaba;
 
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 
+/**
+ * its one piece on the board, ensure smooth relocate when player drag a piece
+ * piece remember its old position, and can back when move was incorrect
+ */
 public class Piece extends StackPane {
 
 
-    private double mouseX,mouseY = 0;
-    private int oldX, oldY = 0;
+    private double mouseCoordX,mouseCoordY = 0;
+    private int oldCoordX, oldCoordY = 0;
 
     private PieceType pieceType;
 
@@ -16,75 +21,78 @@ public class Piece extends StackPane {
         return pieceType;
     }
 
-    public void setPieceType(PieceType pieceType) {
-        this.pieceType = pieceType;
-    }
 
-    public Piece (PieceType pieceType, int x, int y)
+    public Piece (PieceType pieceType, int coordX, int coordY)
     {
         this.pieceType = pieceType;
 
-        move(x,y);
-        Ellipse background = new Ellipse(gameWindow.SQUARE_SIZE * 0.3125 , gameWindow.SQUARE_SIZE * 0.26);
-        background.setFill(pieceType == pieceType.WHITE ? Color.BLACK : Color.valueOf("#c40003"));
-        background.setStroke(Color.BLACK);
-        background.setTranslateX((gameWindow.SQUARE_SIZE - gameWindow.SQUARE_SIZE  * 0.3125 * 2) / 2);
-        background.setTranslateY((gameWindow.SQUARE_SIZE  - gameWindow.SQUARE_SIZE  * 0.26 * 2) / 2 + gameWindow.SQUARE_SIZE  * 0.07);
+        movePiece(coordX,coordY);
+        Ellipse pieceBackground = createPieceBackground();
+        Ellipse pieceTop = createPieceTop();
 
-        Ellipse ellipse = new Ellipse(gameWindow.SQUARE_SIZE * 0.3125, gameWindow.SQUARE_SIZE * 0.26);
 
-        ellipse.setFill(pieceType == PieceType.WHITE
-                ? Color.WHITE : Color.BLACK);
-
-        ellipse.setStroke(Color.BLACK);
-        ellipse.setStrokeWidth(gameWindow.SQUARE_SIZE * 0.03);
-
-        ellipse.setTranslateX((gameWindow.SQUARE_SIZE - gameWindow.SQUARE_SIZE * 0.3125 * 2) / 2);
-        ellipse.setTranslateY((gameWindow.SQUARE_SIZE - gameWindow.SQUARE_SIZE * 0.26 * 2) / 2);
-
-        getChildren().addAll(background,ellipse);
-
+        getChildren().addAll(pieceBackground,pieceTop);
 
         setOnMousePressed(event -> {
-
-            mouseX = event.getSceneX() - gameWindow.BOARD_BORDER;
-            mouseY = event.getSceneY() - gameWindow.BOARD_BORDER;
-
+            mouseCoordX = event.getSceneX() - GameWindow.BOARD_BORDER;
+            mouseCoordY = event.getSceneY() - GameWindow.BOARD_BORDER;
         });
 
-        setOnMouseDragged(event -> {
-
-
-            double mousePositionX = event.getSceneX() - gameWindow.BOARD_BORDER;
-            double mousePositionY = event.getSceneY() - gameWindow.BOARD_BORDER;
-            double mouseDifferenceX = mouseX - oldX * gameWindow.SQUARE_SIZE;
-            double mouseDifferenceY = mouseY - oldY * gameWindow.SQUARE_SIZE;
-            relocate(mousePositionX - mouseDifferenceX  ,mousePositionY - mouseDifferenceY );
-
+        setOnMouseDragged(mouseEvent -> {
+            relocatePieceOnScreen(mouseEvent);
         });
     }
 
-    public Position getOldPiecePosition()
+    public PositionOnBoard getOldPiecePosition()
     {
-        int xFieldPosition = (int) oldX ;
-        int yFieldPosition = (int) oldY ;
+        int coordX = (int) oldCoordX ;
+        int coordY = (int) oldCoordY ;
 
-        return new Position(xFieldPosition,yFieldPosition);
+        return new PositionOnBoard(coordX,coordY);
     }
     public void backToOldPosition()
     {
-        move(oldX,oldY);
+        movePiece(oldCoordX,oldCoordY);
     }
 
-    public void move(int x, int y)
+    public void movePiece(int x, int y)
     {
-        this.oldX = x;
-        this.oldY = y;
+        this.oldCoordX = x;
+        this.oldCoordY = y;
 
-        relocate(oldX*gameWindow.SQUARE_SIZE,oldY*gameWindow.SQUARE_SIZE);
+        relocate(oldCoordX*GameWindow.SQUARE_SIZE,oldCoordY*GameWindow.SQUARE_SIZE);
     }
 
+    private Ellipse createPieceBackground()
+    {
+        Ellipse background = new Ellipse(GameWindow.SQUARE_SIZE * 0.3125 , GameWindow.SQUARE_SIZE * 0.26);
+        background.setFill(pieceType == pieceType.WHITE ? Color.BLACK : Color.valueOf("#c40003"));
+        background.setStroke(Color.BLACK);
+        background.setTranslateX((GameWindow.SQUARE_SIZE - GameWindow.SQUARE_SIZE  * 0.3125 * 2) / 2);
+        background.setTranslateY((GameWindow.SQUARE_SIZE  - GameWindow.SQUARE_SIZE  * 0.26 * 2) / 2 + GameWindow.SQUARE_SIZE  * 0.07);
+        return background;
+    }
+    private Ellipse createPieceTop()
+    {
+        Ellipse pieceTop = new Ellipse(GameWindow.SQUARE_SIZE * 0.3125, GameWindow.SQUARE_SIZE * 0.26);
 
+        pieceTop.setFill(pieceType == PieceType.WHITE
+                ? Color.WHITE : Color.BLACK);
 
+        pieceTop.setStroke(Color.BLACK);
+        pieceTop.setStrokeWidth(GameWindow.SQUARE_SIZE * 0.03);
 
+        pieceTop.setTranslateX((GameWindow.SQUARE_SIZE - GameWindow.SQUARE_SIZE * 0.3125 * 2) / 2);
+        pieceTop.setTranslateY((GameWindow.SQUARE_SIZE - GameWindow.SQUARE_SIZE * 0.26 * 2) / 2);
+        return pieceTop;
+    }
+    private void relocatePieceOnScreen(MouseEvent event)
+    {
+        double mousePositionX = event.getSceneX() - GameWindow.BOARD_BORDER;
+        double mousePositionY = event.getSceneY() - GameWindow.BOARD_BORDER;
+        double mouseDifferenceX = mouseCoordX - oldCoordX * GameWindow.SQUARE_SIZE;
+        double mouseDifferenceY = mouseCoordY - oldCoordY * GameWindow.SQUARE_SIZE;
+        relocate(mousePositionX - mouseDifferenceX  ,mousePositionY - mouseDifferenceY );
+    }
+    
 }
