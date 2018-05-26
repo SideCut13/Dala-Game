@@ -1,13 +1,22 @@
 package pl.kurcaba;
 
+import com.sun.org.apache.bcel.internal.generic.SWITCH;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
+
 import java.io.IOException;
 
 /**
@@ -19,15 +28,19 @@ public class GameWindow extends Application {
     public static final int SQUARE_SIZE = 100;
     public static final int BOARD_WIDTH = 6;
     public static final int BOARD_HEIGHT = 6;
-    public static final int BOARD_BORDER = 150;
+    public static final int BOARD_BORDER = 75;
+    public static final int WINDOW_HEIGHT = 750;
+    public static final int WINDOW_LENGHT = 1200;
 
     private static Parent mainWindowLayout;
     private static Square[][] squaresOnBoard = new Square[BOARD_HEIGHT][BOARD_WIDTH];
 
-    private static Group squareGroup = new Group();
-    private static Group pieceGroup = new Group();
+    private static Group squareGroup;
+    private static Group pieceGroup;
+    private Label gamePhase;
 
-    private static final BoardEvents gameLogic = new GameLogic();
+    private Button resetGameButton;
+    private static BoardEvents gameLogic = new GameLogic();
 
 
 
@@ -36,6 +49,9 @@ public class GameWindow extends Application {
      */
     private void createBoard() {
         Pane gameBoardPane = (Pane) mainWindowLayout.lookup("#gamePane");
+
+        squareGroup = new Group();
+        pieceGroup = new Group();
 
         for(int coordX = 0; coordX < BOARD_HEIGHT ; coordX+= 1)
         {
@@ -54,6 +70,12 @@ public class GameWindow extends Application {
         gameBoardPane.getChildren().addAll(squareGroup,pieceGroup);
     }
 
+    private void handleButtonAction(ActionEvent event)
+    {
+        createBoard();
+        gameLogic = new GameLogic();
+
+    }
     /**
      *
      * @param newPiecePosition place when new piece is created
@@ -83,8 +105,8 @@ public class GameWindow extends Application {
      * If move was correct create new piece on new position, and delete piece on old position
      */
     protected static void pieceMovedByPlayer(MouseEvent event, Piece piece) {
-        int newCoordX = ((int) event.getSceneX() - BOARD_BORDER) / SQUARE_SIZE;
-        int newCoordY = (int) (event.getSceneY() - BOARD_BORDER) / SQUARE_SIZE;
+        int newCoordX = (((int) event.getSceneX() - BOARD_BORDER) / SQUARE_SIZE) ;
+        int newCoordY = ((int) (event.getSceneY() - BOARD_BORDER) / SQUARE_SIZE) ;
 
         piece.backToOldPosition();
         boolean newFieldIsEmpty = squaresOnBoard[newCoordX][newCoordY].getPiece() == null;
@@ -122,6 +144,56 @@ public class GameWindow extends Application {
         squaresOnBoard[piecePosition.coordX][piecePosition.coordY].setPiece(null);
     }
 
+    /**
+     *
+     * @param isMovePhase true if is move phase, false if is drop phase
+     *                    this method change gamePhase label
+     */
+    public static void changeGamePhase(boolean isMovePhase)
+    {
+
+        Text gamePhaseText = (Text) mainWindowLayout.lookup("#gamePhase");
+        if(isMovePhase)
+        {
+            gamePhaseText.setText("Faza gry: ruch");
+        }else
+        {
+            gamePhaseText.setText("Faza gry: rozstawianie");
+        }
+
+    }
+
+    /**
+     *
+     * @param action is Enum which define needed action type
+     *  This method change requiredAction label
+     */
+    public static void changeRequiredAction(RequiredAction action) {
+
+        Text requiredActionText = (Text) mainWindowLayout.lookup("#requiredAction");
+        switch(action)
+        {
+            case DROP:
+                requiredActionText.setText("Wymagana akcja: rozstawienie");
+                break;
+            case MOVE:
+                requiredActionText.setText("Wymagana akcja: ruch");
+                break;
+            case HIT:
+                requiredActionText.setText("Wymagana akcja: bicie");
+                break;
+
+
+        }
+
+
+    }
+
+    /**
+     *
+     *
+     * @return table with size : BOARD_HEIGHT*BOARD_WIDTH. Table has information about piece type on all fields
+     */
     public static PieceType[][] getBoard()
     {
         PieceType[][] board = new PieceType[BOARD_HEIGHT][BOARD_WIDTH];
@@ -130,7 +202,9 @@ public class GameWindow extends Application {
         {
             for(int j = 0;j<BOARD_WIDTH;j++)
             {
-               board[i][j] = squaresOnBoard[i][j].getPiece().getPieceType();
+                if(squaresOnBoard[i][j].getPiece() == null) board[i][j] = null;
+                else board[i][j] = squaresOnBoard[i][j].getPiece().getPieceType();
+
             }
         }
         return board;
@@ -144,10 +218,12 @@ public class GameWindow extends Application {
     public void start(Stage primaryStage) throws IOException {
         mainWindowLayout = FXMLLoader.load(getClass().getResource("/layouts/gameWindow.fxml"));
         primaryStage.setTitle("Dala Game");
-        primaryStage.setScene(new Scene(mainWindowLayout, 900, 900));
+        primaryStage.setScene(new Scene(mainWindowLayout, WINDOW_LENGHT, WINDOW_HEIGHT));
         primaryStage.setResizable(false);
         primaryStage.show();
         createBoard();
+
+
     }
 
 

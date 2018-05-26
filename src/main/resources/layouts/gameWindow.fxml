@@ -1,20 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.text.*?>
-<?import javafx.scene.shape.*?>
+<?import javafx.scene.image.*?>
 <?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.kurcaba.GameWindow">
+<AnchorPane id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.kurcaba.GameWindow">
    <children>
-      <AnchorPane id="gamePane" layoutX="150.0" layoutY="150.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="150.0" AnchorPane.rightAnchor="150.0" AnchorPane.topAnchor="150.0" />
-      <Label layoutX="317.0" layoutY="22.0" prefHeight="66.0" prefWidth="232.0" text="Dala Game">
+      <ImageView fx:id="backgroundImage" fitHeight="750.0" fitWidth="1200.0" pickOnBounds="true" preserveRatio="true" />
+      <AnchorPane id="gamePane" layoutX="75.0" layoutY="75.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600" prefWidth="600" AnchorPane.bottomAnchor="25" AnchorPane.leftAnchor="75.0" AnchorPane.rightAnchor="525.0" AnchorPane.topAnchor="75.0" />
+      <Text fill="#a43838" layoutX="854.0" layoutY="98.0" strokeType="OUTSIDE" strokeWidth="0.0" text="DALA" wrappingWidth="212.6708984375">
          <font>
-            <Font size="45.0" />
+            <Font name="Berlin Sans FB" size="68.0" />
          </font>
-      </Label>
+      </Text>
+      <Text fx:id="gamePhase" layoutX="817.0" layoutY="153.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Faza gry : rozstawianie">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Text>
+      <Text fx:id="requiredAction" layoutX="817.0" layoutY="214.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Wymagana akcja: ruch">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Text>
+      <Button fx:id="resetButton" layoutX="832.0" layoutY="265.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="213.0" text="Reset Gry" />
    </children>
 </AnchorPane>

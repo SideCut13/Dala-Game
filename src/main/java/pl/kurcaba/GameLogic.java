@@ -1,6 +1,8 @@
 package pl.kurcaba;
 
 import javax.swing.text.Position;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class check whether move was compatible with game logic
@@ -8,10 +10,10 @@ import javax.swing.text.Position;
 public class GameLogic implements BoardEvents {
 
     private final int ROUND_NEEDED_TO_PUT_ALL_PIECES = 11;
-    private int gameStage = 1;
+    private int gamePhase = 1;
     private int moveCounter = 0;
     private boolean playerHaveToHit = false;
-
+    private List fieldsUsedToHit  = new ArrayList<threePiecesInRow>();
 
     /**
      *
@@ -23,7 +25,7 @@ public class GameLogic implements BoardEvents {
     @Override
     public void squareClicked(Piece pieceOnSquare,PositionOnBoard squarePosition) {
 
-        if (moveCounter > ROUND_NEEDED_TO_PUT_ALL_PIECES) gameStage = 2;
+
 
         boolean fieldIsEmpty = pieceOnSquare == null;
 
@@ -35,16 +37,25 @@ public class GameLogic implements BoardEvents {
                 
                 boolean fieldIsInCenter = (squarePosition.coordX == 2 || squarePosition.coordX == 3) && (squarePosition.coordY == 2 || squarePosition.coordY == 3);
                 if (fieldIsInCenter) {
-                    if (gameStage == 1 && !playerHaveToHit) GameWindow.createPlayersPiece(squarePosition);
+                    if (gamePhase == 1 && !playerHaveToHit) GameWindow.createPlayersPiece(squarePosition);
                     moveCounter += 1;
+                    if (moveCounter > ROUND_NEEDED_TO_PUT_ALL_PIECES) {
+                        gamePhase = 2;
+                        GameWindow.changeGamePhase(true);
 
+                    }
                 }
             }
 
             else
             {
-                if (gameStage == 1 && !playerHaveToHit) GameWindow.createPlayersPiece(squarePosition);
+                if (gamePhase == 1 && !playerHaveToHit) GameWindow.createPlayersPiece(squarePosition);
                 moveCounter += 1;
+                if (moveCounter > ROUND_NEEDED_TO_PUT_ALL_PIECES) {
+                    gamePhase = 2;
+                    GameWindow.changeGamePhase(true);
+
+                }
             }
         }
         if (pieceOnSquare != null && pieceOnSquare.getPieceType() == PieceType.BLACK)
@@ -52,8 +63,13 @@ public class GameLogic implements BoardEvents {
             if(playerHaveToHit){
                 GameWindow.deletePiece(squarePosition);
                 playerHaveToHit = false;
+
+
             }
         }
+        playerHaveToHit = checkWhetherPlayerHaveToHit();
+
+        changeReqiuredActionLabel();
 
     }
 
@@ -64,7 +80,7 @@ public class GameLogic implements BoardEvents {
     @Override
     public boolean pieceCouldBeMoved() {
 
-        if(gameStage == 1) return false;
+        if(gamePhase == 1) return false;
         else
         {
             if(!playerHaveToHit) return true;
@@ -75,11 +91,13 @@ public class GameLogic implements BoardEvents {
 
     /**
      *
-     * @param piecesOnBoard is table with information about pieces on game piecesOnBoard
      * @return return true or false, if player have to delete enemy piece, or false if he doesn't have to.
+     * This method checks whether player have to hit enemy piece
      */
-    private boolean playerHaveToHit(PieceType[][] piecesOnBoard)
+    private boolean checkWhetherPlayerHaveToHit()
     {
+        PieceType[][] piecesOnBoard = GameWindow.getBoard();
+
         for(int i = 0;i<GameWindow.BOARD_HEIGHT;i++)
         {
             for(int j = 0;j<GameWindow.BOARD_WIDTH;j++)
@@ -104,7 +122,7 @@ public class GameLogic implements BoardEvents {
 
             }
         }
-        return true;
+        return false;
     }
 
     /**
@@ -137,5 +155,22 @@ public class GameLogic implements BoardEvents {
         if(!isDownPieceWhite) return false;
         return true;
 
+    }
+
+    /**
+     *
+     * This method will launch method which changes required action text in GUI
+     *
+     */
+    private void changeReqiuredActionLabel()
+    {
+        if(playerHaveToHit)
+        {
+            GameWindow.changeRequiredAction(RequiredAction.HIT);
+        }else
+        {
+            if(gamePhase == 1) GameWindow.changeRequiredAction(RequiredAction.MOVE);
+            else GameWindow.changeRequiredAction(RequiredAction.DROP);
+        }
     }
 }
