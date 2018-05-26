@@ -14,7 +14,7 @@ public interface BoardEvents {
      *
      * @return true if move was compatible with game logic, false if wasn't
      */
-    boolean pieceCouldBeMoved();
+    boolean pieceCouldBeMoved(PositionOnBoard newPiecePosition);
 
 }
 

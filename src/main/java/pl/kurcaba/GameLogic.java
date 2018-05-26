@@ -13,7 +13,11 @@ public class GameLogic implements BoardEvents {
     private int gamePhase = 1;
     private int moveCounter = 0;
     private boolean playerHaveToHit = false;
-    private List fieldsUsedToHit  = new ArrayList<threePiecesInRow>();
+
+
+
+
+
 
     /**
      *
@@ -67,8 +71,7 @@ public class GameLogic implements BoardEvents {
 
             }
         }
-        playerHaveToHit = checkWhetherPlayerHaveToHit();
-
+        playerHaveToHit = checkWhetherPlayerHaveToHit(squarePosition);
         changeReqiuredActionLabel();
 
     }
@@ -78,12 +81,18 @@ public class GameLogic implements BoardEvents {
      * @return true - if move was compatible with logic, false if wasn't
      */
     @Override
-    public boolean pieceCouldBeMoved() {
+    public boolean pieceCouldBeMoved(PositionOnBoard newPiecePosition) {
 
         if(gamePhase == 1) return false;
         else
         {
-            if(!playerHaveToHit) return true;
+            if(!playerHaveToHit)
+            {
+                playerHaveToHit = checkWhetherPlayerHaveToHit(newPiecePosition);
+                changeReqiuredActionLabel();
+                return true;
+
+            }
             else return false;
         }
 
@@ -94,35 +103,36 @@ public class GameLogic implements BoardEvents {
      * @return return true or false, if player have to delete enemy piece, or false if he doesn't have to.
      * This method checks whether player have to hit enemy piece
      */
-    private boolean checkWhetherPlayerHaveToHit()
+    private boolean checkWhetherPlayerHaveToHit(PositionOnBoard newPiecePosition)
     {
         PieceType[][] piecesOnBoard = GameWindow.getBoard();
 
-        for(int i = 0;i<GameWindow.BOARD_HEIGHT;i++)
-        {
-            for(int j = 0;j<GameWindow.BOARD_WIDTH;j++)
-            {
-                boolean isBoardCorner = ((i==0 && (j==0 || j==GameWindow.BOARD_HEIGHT -1)) ||
-                        (i== GameWindow.BOARD_WIDTH -1) && (j==0 || j==GameWindow.BOARD_HEIGHT -1 ));
-                if(isBoardCorner) continue;
+                boolean HaveThreeHorizontalNeighbour;
+                boolean HaveThreeVerticalNeighbour;
 
-                boolean HaveThreeHorizontalNeighbour = (i != 0 && i != GameWindow.BOARD_HEIGHT -1);
-                boolean HaveThreeVerticalNeighbour = (j != 0 && j != GameWindow.BOARD_HEIGHT -1);
+                boolean isBoardCorner = ((newPiecePosition.coordX ==0 && (newPiecePosition.coordY==0 || newPiecePosition.coordY==GameWindow.BOARD_HEIGHT -1)) ||
+                        (newPiecePosition.coordX== GameWindow.BOARD_WIDTH -1) && (newPiecePosition.coordY==0 || newPiecePosition.coordY==GameWindow.BOARD_HEIGHT -1 ));
+                if(!isBoardCorner) {
+
+                    HaveThreeHorizontalNeighbour = (newPiecePosition.coordX != 0 && newPiecePosition.coordX != GameWindow.BOARD_HEIGHT - 1);
+                    HaveThreeVerticalNeighbour = (newPiecePosition.coordY != 0 && newPiecePosition.coordY != GameWindow.BOARD_HEIGHT - 1);
+
+                }
+                else return false;
 
                 if(HaveThreeHorizontalNeighbour)
                 {
-                    boolean playerHaveToHit = checkSquareHorizontal(piecesOnBoard,new PositionOnBoard(i,j));
+                    boolean playerHaveToHit = checkSquareHorizontal(piecesOnBoard,new PositionOnBoard(newPiecePosition.coordX,newPiecePosition.coordY));
                     if(playerHaveToHit) return true;
                 }
                 if(HaveThreeVerticalNeighbour)
                 {
-                    boolean playerHaveToHit = checkSquareVertical(piecesOnBoard,new PositionOnBoard(i,j));
+                    boolean playerHaveToHit = checkSquareVertical(piecesOnBoard,new PositionOnBoard(newPiecePosition.coordX,newPiecePosition.coordY));
                     if(playerHaveToHit) return true;
                 }
 
-            }
-        }
-        return false;
+
+                return false;
     }
 
     /**
@@ -153,9 +163,13 @@ public class GameLogic implements BoardEvents {
 
         boolean isDownPieceWhite = piecesOnBoard[piecePosition.coordX][piecePosition.coordY+1] == PieceType.WHITE;
         if(!isDownPieceWhite) return false;
+
+
         return true;
 
     }
+
+
 
     /**
      *
@@ -169,8 +183,10 @@ public class GameLogic implements BoardEvents {
             GameWindow.changeRequiredAction(RequiredAction.HIT);
         }else
         {
-            if(gamePhase == 1) GameWindow.changeRequiredAction(RequiredAction.MOVE);
-            else GameWindow.changeRequiredAction(RequiredAction.DROP);
+            if(gamePhase == 1) GameWindow.changeRequiredAction(RequiredAction.DROP);
+            else GameWindow.changeRequiredAction(RequiredAction.MOVE);
         }
     }
+
+
 }

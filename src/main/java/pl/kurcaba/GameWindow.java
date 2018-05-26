@@ -70,12 +70,7 @@ public class GameWindow extends Application {
         gameBoardPane.getChildren().addAll(squareGroup,pieceGroup);
     }
 
-    private void handleButtonAction(ActionEvent event)
-    {
-        createBoard();
-        gameLogic = new GameLogic();
 
-    }
     /**
      *
      * @param newPiecePosition place when new piece is created
@@ -123,11 +118,11 @@ public class GameWindow extends Application {
             boolean moveWasTooFar = (differenceX > 1 || differenceX < -1) || (differenceY > 1 || differenceY < -1);
             if (moveWasTooFar) return;
 
-
-            if (gameLogic.pieceCouldBeMoved()) {
+            PositionOnBoard newPiecePosition = new PositionOnBoard(newCoordX, newCoordY);
+            if (gameLogic.pieceCouldBeMoved(newPiecePosition)) {
 
                 deletePiece(oldPosition);
-                createPlayersPiece(new PositionOnBoard(newCoordX, newCoordY));
+                createPlayersPiece(newPiecePosition);
 
             }
         }
@@ -212,6 +207,19 @@ public class GameWindow extends Application {
 
     /**
      *
+     * this button resets whole game
+     */
+    private void resetGame()
+    {
+        createBoard();
+        gameLogic = new GameLogic();
+        changeGamePhase(false);
+        changeRequiredAction(RequiredAction.DROP);
+
+    }
+
+    /**
+     *
      * This method load layout and create main Scene, after all launch createBoard();
      */
     @Override
@@ -222,6 +230,10 @@ public class GameWindow extends Application {
         primaryStage.setResizable(false);
         primaryStage.show();
         createBoard();
+
+        Button resetButton = (Button) mainWindowLayout.lookup("#resetButton");
+
+        resetButton.setOnMouseClicked(event -> resetGame() );
 
 
     }
