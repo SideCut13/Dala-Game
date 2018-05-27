@@ -20,7 +20,7 @@
             <Font size="24.0" />
          </font>
       </Text>
-      <Text fx:id="requiredAction" layoutX="817.0" layoutY="214.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Wymagana akcja: ruch">
+      <Text fx:id="requiredAction" layoutX="817.0" layoutY="214.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Wymagana akcja: rozstawienie">
          <font>
             <Font size="24.0" />
          </font>

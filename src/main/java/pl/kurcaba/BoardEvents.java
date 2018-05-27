@@ -12,9 +12,9 @@ public interface BoardEvents {
 
     /**
      *
-     * @return true if move was compatible with game logic, false if wasn't
+     * if move was correct, method deletes old piece, and create new
      */
-    boolean pieceCouldBeMoved(PositionOnBoard newPiecePosition);
+    void pieceWasMoved(PositionOnBoard oldPiecePosition,PositionOnBoard newPiecePosition);
 
 }
 

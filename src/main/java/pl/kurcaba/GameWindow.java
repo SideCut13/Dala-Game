@@ -1,17 +1,13 @@
 package pl.kurcaba;
 
-import com.sun.org.apache.bcel.internal.generic.SWITCH;
+
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
@@ -100,6 +96,7 @@ public class GameWindow extends Application {
      * If move was correct create new piece on new position, and delete piece on old position
      */
     protected static void pieceMovedByPlayer(MouseEvent event, Piece piece) {
+
         int newCoordX = (((int) event.getSceneX() - BOARD_BORDER) / SQUARE_SIZE) ;
         int newCoordY = ((int) (event.getSceneY() - BOARD_BORDER) / SQUARE_SIZE) ;
 
@@ -119,12 +116,9 @@ public class GameWindow extends Application {
             if (moveWasTooFar) return;
 
             PositionOnBoard newPiecePosition = new PositionOnBoard(newCoordX, newCoordY);
-            if (gameLogic.pieceCouldBeMoved(newPiecePosition)) {
 
-                deletePiece(oldPosition);
-                createPlayersPiece(newPiecePosition);
+            gameLogic.pieceWasMoved(oldPosition,newPiecePosition);
 
-            }
         }
     }
 
@@ -161,7 +155,7 @@ public class GameWindow extends Application {
     /**
      *
      * @param action is Enum which define needed action type
-     *  This method change requiredAction label
+     *  This method change requiredAction label in game window
      */
     public static void changeRequiredAction(RequiredAction action) {
 
@@ -177,11 +171,7 @@ public class GameWindow extends Application {
             case HIT:
                 requiredActionText.setText("Wymagana akcja: bicie");
                 break;
-
-
         }
-
-
     }
 
     /**
@@ -215,9 +205,7 @@ public class GameWindow extends Application {
         gameLogic = new GameLogic();
         changeGamePhase(false);
         changeRequiredAction(RequiredAction.DROP);
-
     }
-
     /**
      *
      * This method load layout and create main Scene, after all launch createBoard();
@@ -235,16 +223,10 @@ public class GameWindow extends Application {
 
         resetButton.setOnMouseClicked(event -> resetGame() );
 
-
     }
-
-
-
     public static void main(String[] args) {
         launch(args);
     }
-
-
 
 
 }

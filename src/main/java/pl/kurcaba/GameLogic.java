@@ -1,8 +1,5 @@
 package pl.kurcaba;
 
-import javax.swing.text.Position;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class check whether move was compatible with game logic
@@ -13,11 +10,6 @@ public class GameLogic implements BoardEvents {
     private int gamePhase = 1;
     private int moveCounter = 0;
     private boolean playerHaveToHit = false;
-
-
-
-
-
 
     /**
      *
@@ -67,81 +59,112 @@ public class GameLogic implements BoardEvents {
             if(playerHaveToHit){
                 GameWindow.deletePiece(squarePosition);
                 playerHaveToHit = false;
-
-
             }
         }
-        playerHaveToHit = checkWhetherPlayerHaveToHit(squarePosition);
-        changeReqiuredActionLabel();
+        if(!playerHaveToHit) {
+            playerHaveToHit = checkWhetherPlayerHaveToHit(squarePosition);
+            changeReqiuredActionLabel();
+        }
 
     }
 
     /**
      *
-     * @return true - if move was compatible with logic, false if wasn't
+     * if move was correct, method deletes old piece, and create new
      */
     @Override
-    public boolean pieceCouldBeMoved(PositionOnBoard newPiecePosition) {
+    public void pieceWasMoved(PositionOnBoard oldPiecePosition,PositionOnBoard newPiecePosition) {
 
-        if(gamePhase == 1) return false;
+        if(gamePhase == 1) return;
         else
         {
             if(!playerHaveToHit)
             {
+                GameWindow.deletePiece(oldPiecePosition);
+                GameWindow.createPlayersPiece(newPiecePosition);
                 playerHaveToHit = checkWhetherPlayerHaveToHit(newPiecePosition);
                 changeReqiuredActionLabel();
-                return true;
-
             }
-            else return false;
         }
-
     }
+
 
     /**
      *
      * @return return true or false, if player have to delete enemy piece, or false if he doesn't have to.
-     * This method checks whether player have to hit enemy piece
+     * This method checks whether player have to removes opponent's piece
      */
     private boolean checkWhetherPlayerHaveToHit(PositionOnBoard newPiecePosition)
     {
+
+        // here we check whether piece is between two white pieces
         PieceType[][] piecesOnBoard = GameWindow.getBoard();
 
-                boolean HaveThreeHorizontalNeighbour;
-                boolean HaveThreeVerticalNeighbour;
+        boolean playerHaveToHit;
+        boolean HaveThreeHorizontalNeighbour;
+        boolean HaveThreeVerticalNeighbour;
 
-                boolean isBoardCorner = ((newPiecePosition.coordX ==0 && (newPiecePosition.coordY==0 || newPiecePosition.coordY==GameWindow.BOARD_HEIGHT -1)) ||
-                        (newPiecePosition.coordX== GameWindow.BOARD_WIDTH -1) && (newPiecePosition.coordY==0 || newPiecePosition.coordY==GameWindow.BOARD_HEIGHT -1 ));
-                if(!isBoardCorner) {
+        boolean isBoardCorner = ((newPiecePosition.coordX ==0 && (newPiecePosition.coordY==0 || newPiecePosition.coordY==GameWindow.BOARD_HEIGHT -1)) ||
+                (newPiecePosition.coordX== GameWindow.BOARD_WIDTH -1) && (newPiecePosition.coordY==0 || newPiecePosition.coordY==GameWindow.BOARD_HEIGHT -1 ));
+        if(!isBoardCorner) {
 
-                    HaveThreeHorizontalNeighbour = (newPiecePosition.coordX != 0 && newPiecePosition.coordX != GameWindow.BOARD_HEIGHT - 1);
-                    HaveThreeVerticalNeighbour = (newPiecePosition.coordY != 0 && newPiecePosition.coordY != GameWindow.BOARD_HEIGHT - 1);
+            HaveThreeHorizontalNeighbour = (newPiecePosition.coordX != 0 && newPiecePosition.coordX != GameWindow.BOARD_HEIGHT - 1);
+            HaveThreeVerticalNeighbour = (newPiecePosition.coordY != 0 && newPiecePosition.coordY != GameWindow.BOARD_HEIGHT - 1);
 
-                }
-                else return false;
+        }
+        else return false;
 
-                if(HaveThreeHorizontalNeighbour)
-                {
-                    boolean playerHaveToHit = checkSquareHorizontal(piecesOnBoard,new PositionOnBoard(newPiecePosition.coordX,newPiecePosition.coordY));
-                    if(playerHaveToHit) return true;
-                }
-                if(HaveThreeVerticalNeighbour)
-                {
-                    boolean playerHaveToHit = checkSquareVertical(piecesOnBoard,new PositionOnBoard(newPiecePosition.coordX,newPiecePosition.coordY));
-                    if(playerHaveToHit) return true;
-                }
+        if(HaveThreeHorizontalNeighbour)
+        {
+            playerHaveToHit = checkSquareHorizontal(piecesOnBoard,new PositionOnBoard(newPiecePosition.coordX,newPiecePosition.coordY));
+            if(playerHaveToHit) return true;
+        }
+        if(HaveThreeVerticalNeighbour)
+        {
+            playerHaveToHit = checkSquareVertical(piecesOnBoard,new PositionOnBoard(newPiecePosition.coordX,newPiecePosition.coordY));
+            if(playerHaveToHit) return true;
+        }
 
+        //here we check whether piece is next to two white pieces
 
-                return false;
+        boolean canCheckUpNeighbour = (newPiecePosition.coordY > 1);
+        if(canCheckUpNeighbour)
+        {
+            playerHaveToHit = checkSquareVertical(piecesOnBoard,new PositionOnBoard(newPiecePosition.coordX,newPiecePosition.coordY-1));
+            if(playerHaveToHit) return true;
+        }
+        boolean canCheckDownNeighbour = (newPiecePosition.coordY < GameWindow.BOARD_HEIGHT -2);
+        if(canCheckDownNeighbour)
+        {
+            playerHaveToHit = checkSquareVertical(piecesOnBoard,new PositionOnBoard(newPiecePosition.coordX,newPiecePosition.coordY+1));
+            if(playerHaveToHit) return true;
+        }
+        boolean canCheckLeftNeighbour = (newPiecePosition.coordX > 1);
+        if(canCheckLeftNeighbour)
+        {
+            playerHaveToHit = checkSquareHorizontal(piecesOnBoard,new PositionOnBoard(newPiecePosition.coordX-1,newPiecePosition.coordY));
+            if(playerHaveToHit) return true;
+        }
+        boolean canCheckRightNeighbour = (newPiecePosition.coordX < GameWindow.BOARD_WIDTH -2);
+        if(canCheckRightNeighbour)
+        {
+            playerHaveToHit = checkSquareHorizontal(piecesOnBoard,new PositionOnBoard(newPiecePosition.coordX+1,newPiecePosition.coordY));
+            if(playerHaveToHit) return true;
+        }
+
+        return false;
     }
 
     /**
      * @param piecesOnBoard is table with information about pieces on game piecesOnBoard
      * @param piecePosition position of the piece which is check.
-     * @return true if piece have two horizontal neighbours
+     * @return true if piece is white and if have two horizontal white neighbours
      */
     private boolean checkSquareHorizontal(PieceType[][] piecesOnBoard, PositionOnBoard piecePosition)
     {
+        boolean isMiddlePieceWhite = piecesOnBoard[piecePosition.coordX][piecePosition.coordY] == PieceType.WHITE;
+        if(!isMiddlePieceWhite) return false;
+
         boolean isLeftPieceWhite = piecesOnBoard[piecePosition.coordX-1][piecePosition.coordY] == PieceType.WHITE;
         if(!isLeftPieceWhite) return false;
 
@@ -154,10 +177,14 @@ public class GameLogic implements BoardEvents {
     /**
      * @param piecesOnBoard is table with information about pieces on game piecesOnBoard
      * @param piecePosition position of the piece which is check.
-     * @return true if piece have two vertical neighbours
+     * @return true if piece is white and if have two vertical white neighbours
      */
     private boolean checkSquareVertical(PieceType[][] piecesOnBoard, PositionOnBoard piecePosition)
     {
+
+        boolean isMiddlePieceWhite = piecesOnBoard[piecePosition.coordX][piecePosition.coordY] == PieceType.WHITE;
+        if(!isMiddlePieceWhite) return false;
+
         boolean isUpPieceWhite = piecesOnBoard[piecePosition.coordX][piecePosition.coordY-1] == PieceType.WHITE;
         if(!isUpPieceWhite) return false;
 

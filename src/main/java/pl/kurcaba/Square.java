@@ -4,7 +4,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 /**
- * Its one square on the board
+ * It is one square on the board
  */
 public class Square extends Rectangle {
 
