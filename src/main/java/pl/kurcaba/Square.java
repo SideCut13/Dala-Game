@@ -30,6 +30,6 @@ public class Square extends Rectangle {
         setHeight(GameWindow.SQUARE_SIZE);
 
         relocate(coordX * GameWindow.SQUARE_SIZE, coordY * GameWindow.SQUARE_SIZE);
-        setFill(color ? Color.valueOf("#feb") : Color.valueOf("#582"));
+        setFill(color ? Color.valueOf("#C89473") : Color.valueOf("#4E2C15"));
     }
 }

@@ -21,12 +21,12 @@ import java.io.IOException;
  */
 public class GameWindow extends Application {
 
-    public static final int SQUARE_SIZE = 100;
+    public static final int SQUARE_SIZE = 75;
     public static final int BOARD_WIDTH = 6;
     public static final int BOARD_HEIGHT = 6;
     public static final int BOARD_BORDER = 75;
-    public static final int WINDOW_HEIGHT = 750;
-    public static final int WINDOW_LENGHT = 1200;
+    public static final int WINDOW_HEIGHT = 600;
+    public static final int WINDOW_LENGHT = 900;
 
     private static Parent mainWindowLayout;
     private static Square[][] squaresOnBoard = new Square[BOARD_HEIGHT][BOARD_WIDTH];
@@ -88,6 +88,22 @@ public class GameWindow extends Application {
 
     /**
      *
+     * @param newPiecePosition place when new piece is created
+     *
+     * This method create computer's pieces ( Black ), add them to the group and display on field
+     */
+
+    protected static void createComputerPiece(PositionOnBoard newPiecePosition)
+    {
+        Piece piece = new Piece(PieceType.BLACK,newPiecePosition.coordX,newPiecePosition.coordY);
+
+        squaresOnBoard[newPiecePosition.coordX][newPiecePosition.coordY].setPiece(piece);
+        pieceGroup.getChildren().add(piece);
+
+    }
+
+    /**
+     *
      *
      * @param event this is place where mouse was released
      * @param piece is piece which was moved
@@ -126,7 +142,7 @@ public class GameWindow extends Application {
      *  this method delete piece from field, and from display
      */
 
-    protected static void deletePiece(PositionOnBoard piecePosition)
+    public static void deletePiece(PositionOnBoard piecePosition)
     {
         Piece pieceToRemove = squaresOnBoard[piecePosition.coordX][piecePosition.coordY].getPiece();
         pieceGroup.getChildren().remove(pieceToRemove);
@@ -163,13 +179,13 @@ public class GameWindow extends Application {
         switch(action)
         {
             case DROP:
-                requiredActionText.setText("Wymagana akcja: rozstawienie");
+                requiredActionText.setText("Akcja: rozstawienie");
                 break;
             case MOVE:
-                requiredActionText.setText("Wymagana akcja: ruch");
+                requiredActionText.setText("Akcja: ruch");
                 break;
             case HIT:
-                requiredActionText.setText("Wymagana akcja: bicie");
+                requiredActionText.setText("Akcja: bicie");
                 break;
         }
     }
