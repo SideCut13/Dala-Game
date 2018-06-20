@@ -11,6 +11,7 @@ public class GameLogic implements BoardEvents {
     private int moveCounter = 0;
     private boolean playerHaveToHit = false;
 
+
     public int getGamePhase() {
         return gamePhase;
     }
@@ -37,6 +38,7 @@ public class GameLogic implements BoardEvents {
 
                 boolean fieldIsInCenter = (squarePosition.coordX == 2 || squarePosition.coordX == 3) && (squarePosition.coordY == 2 || squarePosition.coordY == 3);
                 if (fieldIsInCenter) {
+                    gamePhase = 1;
                     if (gamePhase == 1 && !playerHaveToHit) GameWindow.createPlayersPiece(squarePosition);
                     moveCounter += 1;
                     if (moveCounter > ROUND_NEEDED_TO_PUT_ALL_PIECES) {
@@ -69,7 +71,6 @@ public class GameLogic implements BoardEvents {
             if(playerHaveToHit){
                 GameWindow.deletePiece(squarePosition);
                 playerHaveToHit = false;
-                computerMove();
             }
         }
 

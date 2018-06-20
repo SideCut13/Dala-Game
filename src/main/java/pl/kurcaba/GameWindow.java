@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * This class support Game Window and Board Pane, create and display 36 squares. Class create, delete and display pieces
@@ -266,55 +267,81 @@ public class GameWindow extends Application {
             return Math.min(minimax(depth+1, nodeIndex*2, true, scores, h),
                     minimax(depth+1, nodeIndex*2 + 1, true, scores, h));
     }
+
     public static void getPossibleComputerMove() {
         PieceType[][] board = getBoard();
         GameLogic gameLogic = new GameLogic();
-        int gamePhase = gameLogic.getGamePhase();
-        RequiredAction action = null;
+        gameLogic.getGamePhase();
         List<PositionOnBoard> positionListWhite = new ArrayList();
         List<PositionOnBoard> positionListBlack = new ArrayList();
-
-        switch (gamePhase) {
+        List<PositionOnBoard> positionListWhiteActual = new ArrayList();
+        List<PositionOnBoard> positionListBlackActual = new ArrayList();
+        if(gameLogic.getGamePhase() == 1){
+            if(board[3][2] == null){
+                createComputerPiece(new PositionOnBoard(3, 2));
+                System.out.println(32);
+            }
+            else if(board[2][3] == null){
+                createComputerPiece(new PositionOnBoard(2, 3));
+                System.out.println(23);
+            }
+            else if(board[3][3] == null){
+                createComputerPiece(new PositionOnBoard(3, 3));
+                System.out.println(33);
+            }
+            else if(board[2][2] == null){
+                createComputerPiece(new PositionOnBoard(2, 2));
+                System.out.println(22);
+            }
+            else{
+                Random rnd = new Random();
+                int xCoord;
+                int yCoord;
+                do{
+                    xCoord = rnd.nextInt(5);
+                    yCoord = rnd.nextInt(5);
+                }while (board[xCoord][yCoord]!= null);
+                if(board[xCoord][yCoord] == null){
+                    createComputerPiece(new PositionOnBoard(xCoord, yCoord));
+                }
+            }
+        }
+        if(gameLogic.getGamePhase() == 2){
+            for (int i = 0; i < BOARD_HEIGHT; i++) {
+                for (int j = 0; j < BOARD_WIDTH; j++) {
+                    Piece piece = squaresOnBoard[i][j].getPiece();
+                    if (piece != null && piece.getPieceType() == PieceType.WHITE) {
+                        positionListWhiteActual.add(new PositionOnBoard(i, j));
+                        getPossibleMoves(board, new PositionOnBoard(i, j), positionListWhite);
+                    }
+                    if (piece != null && piece.getPieceType().equals(PieceType.BLACK)) {
+                        positionListBlackActual.add(new PositionOnBoard(i, j));
+                        getPossibleMoves(board, new PositionOnBoard(i, j), positionListBlack);
+                    }
+                }
+            }
+            for (int i = 0; i < positionListBlack.size() ; i++) {
+                for (int j = 0; j < positionListWhite.size(); j++) {
+                    if (positionListWhite.get(j).equals(positionListBlack.get(i))) {
+                        int scores[] = {3, 5, 2, 9, 12, 5, 23, 23};
+                        int n = scores.length;
+                        int h = log2(n);
+                        minimax(0, 0, true, scores, h);
+                        deletePiece(positionListBlackActual.get(i));
+                        createComputerPiece(positionListBlack.get(i));
+                    }
+                }
+            }
+        }
+        System.out.println(gameLogic.getGamePhase());
+        /*switch (gamePhase) {
             case 1:
-                if(board[3][2] == null){
-                    createComputerPiece(new PositionOnBoard(3, 2));
-                }
-                else if(board[2][3] == null){
-                    createComputerPiece(new PositionOnBoard(2, 3));
-                }
-                else if(board[3][3] == null){
-                    createComputerPiece(new PositionOnBoard(3, 3));
-                }
-                else if(board[2][2] == null){
-                    createComputerPiece(new PositionOnBoard(2, 2));
-                }
-                //createComputerPiece(new PositionOnBoard(2, 3));
+
                 break;
             case 2:
-                for (int i = 0; i < BOARD_HEIGHT; i++) {
-                    for (int j = 0; j < BOARD_WIDTH; j++) {
-                        Piece piece = squaresOnBoard[i][j].getPiece();
-                        if (piece != null && piece.getPieceType() == PieceType.WHITE) {
-                            getPossibleMoves(board, new PositionOnBoard(i, j), positionListWhite);
-                        }
-                        if (piece != null && piece.getPieceType().equals(PieceType.BLACK)) {
-                            getPossibleMoves(board, new PositionOnBoard(i, j), positionListBlack);
-                        }
-                    }
-                }
-                for (int i = 0; i < positionListBlack.size() ; i++) {
-                    for (int j = 0; j < positionListWhite.size(); j++) {
-                        if (positionListWhite.get(j).equals(positionListBlack.get(i))) {
-                            int scores[] = {3, 5, 2, 9, 12, 5, 23, 23};
-                            int n = scores.length;
-                            int h = log2(n);
-                            minimax(0, 0, true, scores, h);
-                            createComputerPiece(positionListBlack.get(i));
-                        }
-                    }
-                }
+
                 break;
-        }
+        }*/
     }
 
 
