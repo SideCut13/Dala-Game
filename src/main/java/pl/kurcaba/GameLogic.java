@@ -11,6 +11,10 @@ public class GameLogic implements BoardEvents {
     private int moveCounter = 0;
     private boolean playerHaveToHit = false;
 
+    public int getGamePhase() {
+        return gamePhase;
+    }
+
     /**
      *
      * @param pieceOnSquare piece which was on clicked square
@@ -30,7 +34,7 @@ public class GameLogic implements BoardEvents {
             boolean pieceHaveToBeInCenter = moveCounter <2;
 
             if(pieceHaveToBeInCenter) {
-                
+
                 boolean fieldIsInCenter = (squarePosition.coordX == 2 || squarePosition.coordX == 3) && (squarePosition.coordY == 2 || squarePosition.coordY == 3);
                 if (fieldIsInCenter) {
                     if (gamePhase == 1 && !playerHaveToHit) GameWindow.createPlayersPiece(squarePosition);
@@ -38,6 +42,7 @@ public class GameLogic implements BoardEvents {
                     if (moveCounter > ROUND_NEEDED_TO_PUT_ALL_PIECES) {
                         gamePhase = 2;
                         GameWindow.changeGamePhase(true);
+
 
                     }
                 }
@@ -53,18 +58,21 @@ public class GameLogic implements BoardEvents {
 
                 }
             }
+            if(!playerHaveToHit) {
+                playerHaveToHit = checkWhetherPlayerHaveToHit(squarePosition);
+                changeReqiuredActionLabel();
+                computerMove();
+            }
         }
         if (pieceOnSquare != null && pieceOnSquare.getPieceType() == PieceType.BLACK)
         {
             if(playerHaveToHit){
                 GameWindow.deletePiece(squarePosition);
                 playerHaveToHit = false;
+                computerMove();
             }
         }
-        if(!playerHaveToHit) {
-            playerHaveToHit = checkWhetherPlayerHaveToHit(squarePosition);
-            changeReqiuredActionLabel();
-        }
+
 
     }
 
@@ -84,6 +92,7 @@ public class GameLogic implements BoardEvents {
                 GameWindow.createPlayersPiece(newPiecePosition);
                 playerHaveToHit = checkWhetherPlayerHaveToHit(newPiecePosition);
                 changeReqiuredActionLabel();
+                if(!playerHaveToHit) computerMove();
             }
         }
     }
@@ -215,5 +224,8 @@ public class GameLogic implements BoardEvents {
         }
     }
 
-
+    private void computerMove()
+    {
+        GameWindow.getPossibleComputerMove();
+    }
 }

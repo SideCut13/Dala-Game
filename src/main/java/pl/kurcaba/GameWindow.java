@@ -14,6 +14,8 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class support Game Window and Board Pane, create and display 36 squares. Class create, delete and display pieces
@@ -95,10 +97,11 @@ public class GameWindow extends Application {
 
     protected static void createComputerPiece(PositionOnBoard newPiecePosition)
     {
-        Piece piece = new Piece(PieceType.BLACK,newPiecePosition.coordX,newPiecePosition.coordY);
-
-        squaresOnBoard[newPiecePosition.coordX][newPiecePosition.coordY].setPiece(piece);
-        pieceGroup.getChildren().add(piece);
+        if(squaresOnBoard[newPiecePosition.coordX][newPiecePosition.coordY].getPiece() == null) {
+            Piece piece = new Piece(PieceType.BLACK, newPiecePosition.coordX, newPiecePosition.coordY);
+            squaresOnBoard[newPiecePosition.coordX][newPiecePosition.coordY].setPiece(piece);
+            pieceGroup.getChildren().add(piece);
+        }
 
     }
 
@@ -210,6 +213,101 @@ public class GameWindow extends Application {
         }
         return board;
     }
+    public static void getPossibleMoves(PieceType[][] board, PositionOnBoard piecePosition,List<PositionOnBoard> possibleMovesList)
+    {
+
+        if(piecePosition.coordY-1 > 0) {
+            if (board[piecePosition.coordX][piecePosition.coordY - 1] == null)
+            {
+                possibleMovesList.add(new PositionOnBoard(piecePosition.coordX,piecePosition.coordY-1));
+            }
+        }
+        if(piecePosition.coordY+1 < 6) {
+            if (board[piecePosition.coordX][piecePosition.coordY + 1] == null)
+            {
+                possibleMovesList.add(new PositionOnBoard(piecePosition.coordX,piecePosition.coordY-1));
+            }
+        }
+        if(piecePosition.coordX-1 > 0) {
+            if (board[piecePosition.coordX -1][piecePosition.coordY] == null)
+            {
+                possibleMovesList.add(new PositionOnBoard(piecePosition.coordX-1,piecePosition.coordY));
+            }
+        }
+        if(piecePosition.coordX+1 < 6) {
+            if (board[piecePosition.coordX+1][piecePosition.coordY] == null)
+            {
+                possibleMovesList.add(new PositionOnBoard(piecePosition.coordX+1,piecePosition.coordY));
+            }
+        }
+
+    }
+    static int log2(int n)
+    {
+        return (n==1)? 0 : 1 + log2(n/2);
+    }
+
+    public static int minimax(int depth, int nodeIndex, boolean  isMax,
+                       int scores[], int h)
+    {
+        // Terminating condition. i.e leaf node is reached
+        if (depth == h)
+            return scores[nodeIndex];
+
+        // If current move is maximizer, find the maximum attainable
+        // value
+        if (isMax)
+            return Math.max(minimax(depth+1, nodeIndex*2, false, scores, h),
+                    minimax(depth+1, nodeIndex*2 + 1, false, scores, h));
+
+            // Else (If current move is Minimizer), find the minimum
+            // attainable value
+        else
+            return Math.min(minimax(depth+1, nodeIndex*2, true, scores, h),
+                    minimax(depth+1, nodeIndex*2 + 1, true, scores, h));
+    }
+    public static void getPossibleComputerMove() {
+        PieceType[][] board = getBoard();
+        GameLogic gameLogic = new GameLogic();
+        int gamePhase = gameLogic.getGamePhase();
+        RequiredAction action = null;
+        List<PositionOnBoard> positionListWhite = new ArrayList();
+        List<PositionOnBoard> positionListBlack = new ArrayList();
+
+        switch (gamePhase) {
+            case 1:
+                createComputerPiece(new PositionOnBoard(2, 3));
+                break;
+            case 2:
+                for (int i = 0; i < BOARD_HEIGHT; i++) {
+                    for (int j = 0; j < BOARD_WIDTH; j++) {
+                        Piece piece = squaresOnBoard[i][j].getPiece();
+                        if (piece != null && piece.getPieceType() == PieceType.WHITE) {
+                            getPossibleMoves(board, new PositionOnBoard(i, j), positionListWhite);
+                        }
+                        if (piece != null && piece.getPieceType().equals(PieceType.BLACK)) {
+                            getPossibleMoves(board, new PositionOnBoard(i, j), positionListBlack);
+                        }
+                    }
+                }
+                for (int i = 0; i < positionListBlack.size() ; i++) {
+                    for (int j = 0; j < positionListWhite.size(); j++) {
+                        if (positionListWhite.get(j).equals(positionListBlack.get(i))) {
+                            int scores[] = {3, 5, 2, 9, 12, 5, 23, 23};
+                            int n = scores.length;
+                            int h = log2(n);
+                            minimax(0, 0, true, scores, h);
+                            createComputerPiece(positionListBlack.get(i));
+                        }
+                    }
+                }
+                break;
+        }
+    }
+
+
+
+
 
     /**
      *
