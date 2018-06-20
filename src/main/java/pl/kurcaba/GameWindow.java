@@ -276,7 +276,19 @@ public class GameWindow extends Application {
 
         switch (gamePhase) {
             case 1:
-                createComputerPiece(new PositionOnBoard(2, 3));
+                if(board[3][2] == null){
+                    createComputerPiece(new PositionOnBoard(3, 2));
+                }
+                else if(board[2][3] == null){
+                    createComputerPiece(new PositionOnBoard(2, 3));
+                }
+                else if(board[3][3] == null){
+                    createComputerPiece(new PositionOnBoard(3, 3));
+                }
+                else if(board[2][2] == null){
+                    createComputerPiece(new PositionOnBoard(2, 2));
+                }
+                //createComputerPiece(new PositionOnBoard(2, 3));
                 break;
             case 2:
                 for (int i = 0; i < BOARD_HEIGHT; i++) {

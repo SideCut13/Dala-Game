@@ -96,7 +96,40 @@ public class GameLogic implements BoardEvents {
             }
         }
     }
+    public void centerForComputer(Piece pieceOnSquare,PositionOnBoard squarePosition){
+        boolean fieldIsEmpty = pieceOnSquare == null;
 
+        if (fieldIsEmpty)
+        {
+            boolean pieceHaveToBeInCenter = moveCounter <2;
+
+            if(pieceHaveToBeInCenter) {
+
+                boolean fieldIsInCenter = (squarePosition.coordX == 2 || squarePosition.coordX == 3) && (squarePosition.coordY == 2 || squarePosition.coordY == 3);
+                if (fieldIsInCenter) {
+                    if (gamePhase == 1 && !playerHaveToHit) GameWindow.createComputerPiece(squarePosition);
+                    moveCounter += 1;
+                    if (moveCounter > ROUND_NEEDED_TO_PUT_ALL_PIECES) {
+                        gamePhase = 2;
+                        GameWindow.changeGamePhase(true);
+
+
+                    }
+                }
+            }
+
+            else
+            {
+                if (gamePhase == 1 && !playerHaveToHit) GameWindow.createPlayersPiece(squarePosition);
+                moveCounter += 1;
+                if (moveCounter > ROUND_NEEDED_TO_PUT_ALL_PIECES) {
+                    gamePhase = 2;
+                    GameWindow.changeGamePhase(true);
+
+                }
+            }
+        }
+    }
 
     /**
      *
