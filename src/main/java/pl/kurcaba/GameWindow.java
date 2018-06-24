@@ -84,6 +84,7 @@ public class GameWindow extends Application {
         piece.setOnMouseReleased(event -> {
             pieceMovedByPlayer(event,piece);
         });
+
         squaresOnBoard[newPiecePosition.coordX][newPiecePosition.coordY].setPiece(piece);
         pieceGroup.getChildren().add(piece);
 
@@ -100,6 +101,10 @@ public class GameWindow extends Application {
     {
         if(squaresOnBoard[newPiecePosition.coordX][newPiecePosition.coordY].getPiece() == null) {
             Piece piece = new Piece(PieceType.BLACK, newPiecePosition.coordX, newPiecePosition.coordY);
+            piece.setOnMouseClicked(event ->
+            {
+                gameLogic.squareClicked(piece,piece.getOldPiecePosition());
+            });
             squaresOnBoard[newPiecePosition.coordX][newPiecePosition.coordY].setPiece(piece);
             pieceGroup.getChildren().add(piece);
         }
@@ -270,8 +275,7 @@ public class GameWindow extends Application {
 
     public static void getPossibleComputerMove() {
         PieceType[][] board = getBoard();
-        GameLogic gameLogic = new GameLogic();
-        gameLogic.getGamePhase();
+
         List<PositionOnBoard> positionListWhite = new ArrayList();
         List<PositionOnBoard> positionListBlack = new ArrayList();
         List<PositionOnBoard> positionListWhiteActual = new ArrayList();

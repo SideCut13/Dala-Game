@@ -16,5 +16,6 @@ public interface BoardEvents {
      */
     void pieceWasMoved(PositionOnBoard oldPiecePosition,PositionOnBoard newPiecePosition);
 
+    int getGamePhase();
 }
 

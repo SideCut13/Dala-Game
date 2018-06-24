@@ -88,11 +88,13 @@ public class Piece extends StackPane {
     }
     private void relocatePieceOnScreen(MouseEvent event)
     {
-        double mousePositionX = event.getSceneX() - GameWindow.BOARD_BORDER;
-        double mousePositionY = event.getSceneY() - GameWindow.BOARD_BORDER;
-        double mouseDifferenceX = mouseCoordX - oldCoordX * GameWindow.SQUARE_SIZE;
-        double mouseDifferenceY = mouseCoordY - oldCoordY * GameWindow.SQUARE_SIZE;
-        relocate(mousePositionX - mouseDifferenceX  ,mousePositionY - mouseDifferenceY );
+        if(this.pieceType == PieceType.WHITE) {
+            double mousePositionX = event.getSceneX() - GameWindow.BOARD_BORDER;
+            double mousePositionY = event.getSceneY() - GameWindow.BOARD_BORDER;
+            double mouseDifferenceX = mouseCoordX - oldCoordX * GameWindow.SQUARE_SIZE;
+            double mouseDifferenceY = mouseCoordY - oldCoordY * GameWindow.SQUARE_SIZE;
+            relocate(mousePositionX - mouseDifferenceX, mousePositionY - mouseDifferenceY);
+        }
     }
     
 }

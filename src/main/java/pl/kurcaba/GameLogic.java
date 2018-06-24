@@ -41,12 +41,7 @@ public class GameLogic implements BoardEvents {
                     gamePhase = 1;
                     if (gamePhase == 1 && !playerHaveToHit) GameWindow.createPlayersPiece(squarePosition);
                     moveCounter += 1;
-                    if (moveCounter > ROUND_NEEDED_TO_PUT_ALL_PIECES) {
-                        gamePhase = 2;
-                        GameWindow.changeGamePhase(true);
-
-
-                    }
+                    computerMove();
                 }
             }
 
@@ -60,7 +55,7 @@ public class GameLogic implements BoardEvents {
 
                 }
             }
-            if(!playerHaveToHit) {
+            if(!playerHaveToHit && !pieceHaveToBeInCenter) {
                 playerHaveToHit = checkWhetherPlayerHaveToHit(squarePosition);
                 changeReqiuredActionLabel();
                 computerMove();
@@ -71,6 +66,7 @@ public class GameLogic implements BoardEvents {
             if(playerHaveToHit){
                 GameWindow.deletePiece(squarePosition);
                 playerHaveToHit = false;
+                changeReqiuredActionLabel();
             }
         }
 
