@@ -46,7 +46,7 @@ public class GameWindow extends Application {
     /**
      * This method create game board, create squares in two different colors. Add squares to squares table and display them on Game Pane
      */
-    private void createBoard() {
+    private static void createBoard() {
         Pane gameBoardPane = (Pane) mainWindowLayout.lookup("#gamePane");
 
         squareGroup = new Group();
@@ -348,7 +348,21 @@ public class GameWindow extends Application {
         }*/
     }
 
-
+    /**
+     *
+     * @param notificationText Text which will be displayed in game window when game will be end
+     */
+    public static void gameWinNotification(String notificationText)
+    {
+        Text notificationTextField = (Text) mainWindowLayout.lookup("#winText");
+        notificationTextField.setText(notificationText);
+        resetGame();
+    }
+    public static void hideGameWinNotification()
+    {
+        Text notificationTextField = (Text) mainWindowLayout.lookup("#winText");
+        notificationTextField.setText("");
+    }
 
 
 
@@ -356,7 +370,7 @@ public class GameWindow extends Application {
      *
      * this button resets whole game
      */
-    private void resetGame()
+    private static void resetGame()
     {
         createBoard();
         gameLogic = new GameLogic();

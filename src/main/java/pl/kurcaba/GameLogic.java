@@ -26,8 +26,6 @@ public class GameLogic implements BoardEvents {
     @Override
     public void squareClicked(Piece pieceOnSquare,PositionOnBoard squarePosition) {
 
-
-
         boolean fieldIsEmpty = pieceOnSquare == null;
 
         if (fieldIsEmpty)
@@ -35,7 +33,7 @@ public class GameLogic implements BoardEvents {
             boolean pieceHaveToBeInCenter = moveCounter <2;
 
             if(pieceHaveToBeInCenter) {
-
+                GameWindow.hideGameWinNotification();
                 boolean fieldIsInCenter = (squarePosition.coordX == 2 || squarePosition.coordX == 3) && (squarePosition.coordY == 2 || squarePosition.coordY == 3);
                 if (fieldIsInCenter) {
                     gamePhase = 1;
@@ -67,6 +65,7 @@ public class GameLogic implements BoardEvents {
                 GameWindow.deletePiece(squarePosition);
                 playerHaveToHit = false;
                 changeReqiuredActionLabel();
+                checkWhetherPlayerWin();
             }
         }
 
@@ -140,8 +139,8 @@ public class GameLogic implements BoardEvents {
         PieceType[][] piecesOnBoard = GameWindow.getBoard();
 
         boolean playerHaveToHit;
-        boolean HaveThreeHorizontalNeighbour;
-        boolean HaveThreeVerticalNeighbour;
+        boolean HaveThreeHorizontalNeighbour = false;
+        boolean HaveThreeVerticalNeighbour = false;
 
         boolean isBoardCorner = ((newPiecePosition.coordX ==0 && (newPiecePosition.coordY==0 || newPiecePosition.coordY==GameWindow.BOARD_HEIGHT -1)) ||
                 (newPiecePosition.coordX== GameWindow.BOARD_WIDTH -1) && (newPiecePosition.coordY==0 || newPiecePosition.coordY==GameWindow.BOARD_HEIGHT -1 ));
@@ -151,7 +150,7 @@ public class GameLogic implements BoardEvents {
             HaveThreeVerticalNeighbour = (newPiecePosition.coordY != 0 && newPiecePosition.coordY != GameWindow.BOARD_HEIGHT - 1);
 
         }
-        else return false;
+
 
         if(HaveThreeHorizontalNeighbour)
         {
@@ -254,6 +253,19 @@ public class GameLogic implements BoardEvents {
         }
     }
 
+    private void checkWhetherPlayerWin()
+    {
+        if(gamePhase == 2) {
+            PieceType[][] board = GameWindow.getBoard();
+            int blackCounter = 0;
+            for (int i = 0; i < GameWindow.BOARD_WIDTH; i++) {
+                for (int j = 0; j < GameWindow.BOARD_HEIGHT; j++) {
+                    if (board[i][j] == PieceType.BLACK) blackCounter++;
+                }
+            }
+            if (blackCounter < 3) GameWindow.gameWinNotification("Gratulacje Wygrales");
+        }
+    }
     private void computerMove()
     {
         GameWindow.getPossibleComputerMove();
