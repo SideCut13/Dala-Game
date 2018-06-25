@@ -219,35 +219,10 @@ public class GameWindow extends Application {
         }
         return board;
     }
-    public static void getPossibleMoves(PieceType[][] board, PositionOnBoard piecePosition,List<PositionOnBoard> possibleMovesList)
-    {
 
-        if(piecePosition.coordY-1 > 0) {
-            if (board[piecePosition.coordX][piecePosition.coordY - 1] == null)
-            {
-                possibleMovesList.add(new PositionOnBoard(piecePosition.coordX,piecePosition.coordY-1));
-            }
-        }
-        if(piecePosition.coordY+1 < 6) {
-            if (board[piecePosition.coordX][piecePosition.coordY + 1] == null)
-            {
-                possibleMovesList.add(new PositionOnBoard(piecePosition.coordX,piecePosition.coordY-1));
-            }
-        }
-        if(piecePosition.coordX-1 > 0) {
-            if (board[piecePosition.coordX -1][piecePosition.coordY] == null)
-            {
-                possibleMovesList.add(new PositionOnBoard(piecePosition.coordX-1,piecePosition.coordY));
-            }
-        }
-        if(piecePosition.coordX+1 < 6) {
-            if (board[piecePosition.coordX+1][piecePosition.coordY] == null)
-            {
-                possibleMovesList.add(new PositionOnBoard(piecePosition.coordX+1,piecePosition.coordY));
-            }
-        }
 
-    }
+
+
     static int log2(int n)
     {
         return (n==1)? 0 : 1 + log2(n/2);
@@ -315,12 +290,12 @@ public class GameWindow extends Application {
                 for (int j = 0; j < BOARD_WIDTH; j++) {
                     Piece piece = squaresOnBoard[i][j].getPiece();
                     if (piece != null && piece.getPieceType() == PieceType.WHITE) {
-                        positionListWhiteActual.add(new PositionOnBoard(i, j));
-                        getPossibleMoves(board, new PositionOnBoard(i, j), positionListWhite);
+                      //  positionListWhiteActual.add(new PositionOnBoard(i, j));
+                     //   Computer.getPossibleMoves(new PositionOnBoard(i, j));
                     }
                     if (piece != null && piece.getPieceType().equals(PieceType.BLACK)) {
                         positionListBlackActual.add(new PositionOnBoard(i, j));
-                        getPossibleMoves(board, new PositionOnBoard(i, j), positionListBlack);
+                        Computer.getPossibleMoves( new PositionOnBoard(i, j));
                     }
                 }
             }
